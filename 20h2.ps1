@@ -18,8 +18,6 @@ function clearformwindow {
 }
 
 
-
-
 $Button1_Click = {
     
     # Get hostname from input - if no input use local machine
@@ -201,7 +199,7 @@ $FetchButton_Click = {
     $ComputerName.Text = ""
 }
 
-
+# Just testing git commits
 Add-Type -AssemblyName System.Windows.Forms
 . (Join-Path $PSScriptRoot '20h2.designer.ps1')
 $Form1.ShowDialog()
