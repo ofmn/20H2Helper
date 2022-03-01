@@ -17,7 +17,7 @@ function clearformwindow {
     $ProgressBar1.Visible = $false
 }
 
-
+# Clicking on button fetch
 $Button1_Click = {
     
     # Get hostname from input - if no input use local machine
@@ -115,6 +115,7 @@ $Button1_Click = {
             $diskspaceleft = [Math]::Round($freeandtotal.Freespace / 1GB)
             If ($diskspaceleft -le 25) { $disktext = "Not enough diskspace! - Only $diskspaceleft GB left!" }
             else { $disktext = "$diskspaceleft GB free / of $totaldisk GB" }
+
             # If log file "scanresult.xml" exist search for "BlockMigration="True". As this means there are out of date drivers that needs updating.
             # Count how many entries, and this will tell how many drivers need updating. Output number as filename to new file in folder.
             If (Test-Path "$destinationfolder\Scanresult.xml") {
