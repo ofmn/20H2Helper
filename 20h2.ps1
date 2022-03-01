@@ -6,8 +6,6 @@ $UserName = $Credential.UserName
 $Password = $Credential.GetNetworkCredential().Password
 
 $script:Local = (Get-WmiObject -Class win32_computersystem).Name
-
-
 function clearformwindow {
     $TextBox1.Text = ""
     $Form1.Height = 323
@@ -34,8 +32,6 @@ $Button1_Click = {
     }
     # When searching make sure that all fields are cleared.
     clearformwindow
-
-
     #
     If ($hostname -ne $Local) {
         $script:wmipara = @{
@@ -71,7 +67,8 @@ $Button1_Click = {
             $osversion = "$osversion = 20H2"
             $correctOSversion = $true
         }
-    
+        # It should test for both the OS version but also if the WindowsBT exist.
+        # 20H2 = stop and just tell ITSS. No WindowsBT, also stop, because the rest of this code is dependendt on it being there
         #If ($correctOSversion -ne $true) {
             If (Test-path \\$hostname\c$\`$WINDOWS.~BT) {
             # Get logs if exist
