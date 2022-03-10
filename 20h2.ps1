@@ -30,14 +30,14 @@ $Button1_Click = {
     }
     # When searching make sure that all fields are cleared.
     clearformwindow
-    #
+    # If hostname is not local PC set @wmipara to include hostname and credentials (needed for remote connection)
     If ($hostname -ne $Local) {
         $script:wmipara = @{
             ComputerName = $hostname
             Credential   = $Credential
         }
     }
-    
+    # If hostname is local PC you cannot use credential parameter, therefore leaving it out
     If ($hostname -eq $Local) {
         $script:wmipara = @{
             ComputerName = $hostname
@@ -66,8 +66,21 @@ $Button1_Click = {
             $correctOSversion = $true
         }
         # It should test for both the OS version but also if the WindowsBT exist.
-        # 20H2 = stop and just tell ITSS. No WindowsBT, also stop, because the rest of this code is dependendt on it being there
+        # 20H2 = stop and just tell ITSS. No WindowsBT, also stop, because the rest of this code is dependend on it being there
         If ($correctOSversion -ne $true) {
+# This try added as some random access denied errors was thrown.. this should catch this. Can be cleaned up though.
+# THe try test path line is checked to work before the next Test-path line a little further below.. because the second was throwing errors.
+        #<#
+            try { Test-path "\\$hostname\c$\`$WINDOWS.~BT" -ErrorAction Stop  }
+            catch [System.UnauthorizedAccessException] {
+                Write-Host -ForegroundColor Red "Access Denied to $hostname";
+                $ComputerName.Text = "Access Denied"
+            }
+            catch {
+                Write-Host -ForegroundColor Red "Access Super Denied to $hostname";
+                $ComputerName.Text = "Access Super Denied"
+            }        
+            #>
             If (Test-path \\$hostname\c$\`$WINDOWS.~BT) {
                 # Get logs if exist
                 $script:sourcefolder = "\\$hostname\c$\`$WINDOWS.~BT\Sources\Panther"
@@ -169,6 +182,8 @@ $driverarray"
                 }
                 $TextBox1.Text | Out-File $destinationfolder\Textboxoutput.txt
             }
+        
+        
         }
         If ($correctOSversion -eq $true) { $TextBox1.Text = "Computer successfully updated." }   
         If (($correctOSversion -ne $true) -and (!(Test-Path \\$hostname\c$\`$WINDOWS.~BT))) {
